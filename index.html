@@ -81,6 +81,18 @@
             font-style: italic;
             color: #666;
         }
+
+        .sound-control {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .volume-slider {
+            width: 100px;
+        }
     </style>
 </head>
 <body>
@@ -103,9 +115,18 @@
             <p>Completed Pomodoros: <span id="pomodoroCount">0</span></p>
             <p>Total Focus Time: <span id="totalTime">0</span> minutes</p>
         </div>
+        <div class="sound-control">
+            <label for="volume">Alert Volume:</label>
+            <input type="range" id="volume" class="volume-slider" min="0" max="1" step="0.1" value="0.5">
+            <button onclick="testSound()">Test Sound</button>
+        </div>
     </div>
 
     <script>
+        const alarmSound = new Audio('https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav');
+        const workCompleteSound = new Audio('https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav');
+        const breakCompleteSound = new Audio('https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav');
+
         let timeLeft;
         let timerId = null;
         let isRunning = false;
@@ -118,6 +139,15 @@
         const LONG_BREAK_TIME = 15 * 60; // 15 minutes
 
         timeLeft = POMODORO_TIME;
+
+        function playSound(sound) {
+            sound.volume = document.getElementById('volume').value;
+            sound.play();
+        }
+
+        function testSound() {
+            playSound(alarmSound);
+        }
 
         function updateDisplay() {
             const minutes = Math.floor(timeLeft / 60);
@@ -137,25 +167,31 @@
                 timerId = setInterval(() => {
                     timeLeft--;
                     updateDisplay();
+                    
+                    // Play countdown sounds for the last 3 seconds
+                    if (timeLeft <= 3 && timeLeft > 0) {
+                        playSound(alarmSound);
+                    }
+
                     if (timeLeft === 0) {
                         clearInterval(timerId);
                         isRunning = false;
                         if (currentMode === 'pomodoro') {
                             pomodoroCount++;
-                            totalFocusTime += 25; // Add 25 minutes to total focus time
+                            totalFocusTime += 25;
                             updateStats();
+                            playSound(workCompleteSound);
                             alert('Pomodoro completed! Time for a break!');
-                        } else {
-                            alert('Break time is over! Ready for another Pomodoro?');
-                        }
-                        // Automatically switch to the appropriate break after a Pomodoro
-                        if (currentMode === 'pomodoro') {
+                            
+                            // Switch to appropriate break
                             if (pomodoroCount % 4 === 0) {
                                 setMode('longBreak');
                             } else {
                                 setMode('shortBreak');
                             }
                         } else {
+                            playSound(breakCompleteSound);
+                            alert('Break time is over! Ready for another Pomodoro?');
                             setMode('pomodoro');
                         }
                     }
@@ -194,6 +230,20 @@
             }
             updateDisplay();
         }
+
+        // Initialize volume control
+        document.getElementById('volume').addEventListener('input', function(e) {
+            alarmSound.volume = e.target.value;
+            workCompleteSound.volume = e.target.value;
+            breakCompleteSound.volume = e.target.value;
+        });
+
+        // Pre-load sounds
+        document.addEventListener('DOMContentLoaded', function() {
+            alarmSound.load();
+            workCompleteSound.load();
+            breakCompleteSound.load();
+        });
     </script>
 </body>
 </html>
