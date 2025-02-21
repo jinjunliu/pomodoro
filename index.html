@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Simple Pomodoro Timer</title>
+    <title>Pomodoro Timer with Counter</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,12 +35,18 @@
             margin: 10px;
             color: #333;
         }
+        #count {
+            font-size: 1.2rem;
+            margin: 10px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="phase">Work Time</div>
         <div id="timer">25:00</div>
+        <div id="count">Work Periods: 0</div>
         <div class="controls">
             <button onclick="startTimer()">Start</button>
             <button onclick="pauseTimer()">Pause</button>
@@ -52,6 +58,7 @@
         let timeLeft = 25 * 60; // 25 minutes in seconds
         let isWorkPhase = true;
         let timerInterval = null;
+        let workCount = 0;
         const workTime = 25 * 60;
         const breakTime = 5 * 60;
 
@@ -73,6 +80,13 @@
                     timeLeft = isWorkPhase ? workTime : breakTime;
                     document.getElementById('phase').textContent = 
                         isWorkPhase ? 'Work Time' : 'Break Time';
+                    
+                    // Increment count when switching from work to break
+                    if (!isWorkPhase) {
+                        workCount++;
+                        document.getElementById('count').textContent = `Work Periods: ${workCount}`;
+                    }
+                    
                     new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZRA0PVqzn77BdGAg+ltryxnMpBSl+zPLaizsIGGS57OihUBELTKXh8bllHgU2jdXzzn0vBSF1xe/glEILElyx6OyrWBUIQ5zd8sFuJAUuhM/z1YU2Bhxqvu7mnEYODlOq5O+zYBoGPJPY88p2KwUme8rx3I4+CRZiturqpVITC0mi4PK8aB8GM4nU8tGAMQYfcsLu45ZFDBFYr+ftrVoXCECY3PLEcSYELIHO8diJOQcZaLvt559NEAxPqOPwtmMcBjiP1/PMeS0GI3fH8N2RQAoUXrTp66hVFApGnt/yvmwhBTCG0fPTgjQGHW/A7eSaRQ0PVqzl77BeGQc+ltrzxnUoBSh+zPPaizsIGGS56+mjTxELTKXh8bllHgU1jdT0z3wvBSJ0xe/glEILElyx6OyrWRUIRJve8sFuJAUug8/z1oU2Bhxqvu7mnEYODlOq5O+zYRsGPJLY88p3KwUme8rx3I4+CRVht+rqpVMSC0mh4PK8aiAFM4nT89GAMQYfccPu45ZFDBFYr+ftrVwWCECY3PLEcSYGK4DN8tiIOQcZZ7zs56BODwxPp+PxtmQcBjiP1/PMeS0GI3fH8N+RQAoUXrTp66hWFApGnt/yv2whBTCG0PTTgzQHHG/A7eSaSw0PVqzl77BeGQc+ltvyxnUoBSh9y/PaizsIGGS56+mjUREKTKPi8blnHgU1jdTy0HwvBSJ0xPDglEQKElux6eyrWRUJQ5vd88FwJAUug8/z1oU2Bhxqvu7mnEgNDlKq5O+zYRsGOpPY88p3KwUmecnw3Y4/CBVht+rqpVMSC0mh4PK8aiAFM4nT89GAMQYfccLv45dGCxFYrufur1sYB0CY3PLEcycFK4DN8tiIOQcZZ7zs56BODwxPp+PxtmQdBTiP1/PMeS0GI3bH8N+RQQkUXrTp66hWFApGnt/yv2whBTCG0PTTgzQHHG3A7eSaSw0PVqzl77BeGQc+ltrzyHQpBSh9y/PaizsIGGS56+mjUREKTKPi8blnHwU1jdTy0H4wBSF0xPDglEQKElux6eyrWRUJQ5vd88FwJAUtg8/z1oY3Bhxqvu7mnEgNDlKp5PC1YRsGOpPY88p3LQUlecnw3Y8/CBVht+rqpVMSC0mh4PK8aiAFMojT89GBMgYfccLv45dGCxFYrufur1sYB0CX3PLEcycFK4DN8tiKOQcYZ7zs56BODwxPp+PxtmQdBTeP1/PMei4FI3bH8N+RQQkUXrTp66hWFApGnt/yv2whBTCG0PTTgzQHHG3A7eSaSw0PVqzl77BeGQc+ltrzyHQpBSh9y/PaizsIGGS56+mjUREKTKPi8blnHwU1jdTy0H4wBSF0xPDglEQKElux6eyrWRUJQ5vd88FwJAUtg8/z1oY3Bhxqvu7mnEgNDlKp5PC1YRsGOpPY88p3LQUlecnw3Y8/CBVht+rqpVMSC0mh4PK8aiAFMojT89GBMgYfccLv45dGCxFYrufur1sYB0CX3PLEcycFK4DN8tiKOQcYZ7zs56BODwxPp+PxtmQdBTeP1/PMei4FI3bH8N+RQQkUXrTp66hWFApGnt/yv2whBTCG0PTTgzQHHG3A7eSaSw0PVqzl77BeGQc+ltrzyHQpBSh9y/PaizsIGGS56+mjUREKTKPi8blnHwU1jdTy0H4wBSF0xPDglEQKElux6eyrWRUJQ5vd88FwJAUtg8/z1oY3Bhxqvu7mnEgNDlKp5PC1YRsGOpPY88t3LQUlecnw3Y8/CBVht+rqpVMSC0mh4PK8aiAFMojT89GBMgYfccLv45dGCxFYrufur1sYB0CX3PLEcycFK4DN8tiKOQcYZ7zs56BODwxPp+PxtmQdBTeP1/PMei4FI3bH8N+RQQkUXrTp66hWFApGnt/yv2whBTA=').play();
                 }
             }, 1000);
